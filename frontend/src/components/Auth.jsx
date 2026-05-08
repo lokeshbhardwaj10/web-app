@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { authService } from '../services/api.js';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import '../styles/auth.css';
@@ -27,11 +27,16 @@ export const SignUp = () => {
     setLoading(true);
 
     try {
-      const response = await authService.signup(formData);
+      const submitData = {
+        ...formData,
+        email: formData.email.trim().toLowerCase(),
+      };
+      const response = await authService.signup(submitData);
       login(response.data.user, response.data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Signup failed');
+      const backendError = err.response?.data?.message || err.response?.data?.errors?.[0]?.msg;
+      setError(backendError || 'Signup failed');
     } finally {
       setLoading(false);
     }
@@ -86,7 +91,7 @@ export const SignUp = () => {
           </button>
         </form>
         <p>
-          Already have an account? <a href="/login">Login</a>
+          Already have an account? <Link to="/login">Login</Link>
         </p>
       </div>
     </div>
@@ -113,11 +118,16 @@ export const LogIn = () => {
     setLoading(true);
 
     try {
-      const response = await authService.login(formData);
+      const submitData = {
+        ...formData,
+        email: formData.email.trim().toLowerCase(),
+      };
+      const response = await authService.login(submitData);
       login(response.data.user, response.data.token);
       navigate('/dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      const backendError = err.response?.data?.message || err.response?.data?.errors?.[0]?.msg;
+      setError(backendError || 'Login failed');
     } finally {
       setLoading(false);
     }
@@ -150,7 +160,7 @@ export const LogIn = () => {
           </button>
         </form>
         <p>
-          Don't have an account? <a href="/signup">Sign Up</a>
+          Don't have an account? <Link to="/signup">Sign Up</Link>
         </p>
       </div>
     </div>

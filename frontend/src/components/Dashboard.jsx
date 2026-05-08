@@ -58,10 +58,10 @@ export const Dashboard = () => {
           <h3>Overdue Tasks</h3>
           <div className="tasks-list">
             {dashboardData.overdueTasks.map((task) => (
-              <div key={task.id} className="overdue-task">
+              <div key={task._id} className="overdue-task">
                 <h4>{task.title}</h4>
-                <p>Project: {task.project_name}</p>
-                <small>Due: {new Date(task.due_date).toLocaleDateString()}</small>
+                <p>Project: {task.project?.name || 'N/A'}</p>
+                <small>Due: {task.dueDate ? new Date(task.dueDate).toLocaleDateString() : 'No due date'}</small>
               </div>
             ))}
           </div>
@@ -72,9 +72,9 @@ export const Dashboard = () => {
         <h3>Your Projects ({dashboardData.projects.length})</h3>
         <div className="projects-list">
           {dashboardData.projects.map((project) => (
-            <div key={project.id} className="project-summary">
+            <div key={project._id} className="project-summary">
               <h4>{project.name}</h4>
-              <small>Created: {new Date(project.created_at).toLocaleDateString()}</small>
+              <small>Created: {new Date(project.createdAt).toLocaleDateString()}</small>
             </div>
           ))}
         </div>

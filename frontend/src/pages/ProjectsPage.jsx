@@ -11,6 +11,8 @@ export const ProjectPage = ({ projectId, onBack }) => {
   const [error, setError] = useState('');
   const [activeTab, setActiveTab] = useState('tasks');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [showTaskForm, setShowTaskForm] = useState(true);
+  const [showTeamForm, setShowTeamForm] = useState(true);
 
   useEffect(() => {
     fetchProject();
@@ -58,20 +60,42 @@ export const ProjectPage = ({ projectId, onBack }) => {
 
       {activeTab === 'tasks' && (
         <div className="tab-content">
-          <CreateTask
-            projectId={projectId}
-            onTaskCreated={() => setRefreshTrigger(refreshTrigger + 1)}
-          />
+          <div className="section-header">
+            <h2>Tasks</h2>
+            <button
+              className="primary-btn"
+              onClick={() => setShowTaskForm((prev) => !prev)}
+            >
+              {showTaskForm ? 'Hide Task Form' : 'Add Task'}
+            </button>
+          </div>
+          {showTaskForm && (
+            <CreateTask
+              projectId={projectId}
+              onTaskCreated={() => setRefreshTrigger((prev) => prev + 1)}
+            />
+          )}
           <TaskList projectId={projectId} refreshTrigger={refreshTrigger} />
         </div>
       )}
 
       {activeTab === 'team' && (
         <div className="tab-content">
-          <AddTeamMember
-            projectId={projectId}
-            onMemberAdded={() => setRefreshTrigger(refreshTrigger + 1)}
-          />
+          <div className="section-header">
+            <h2>Team</h2>
+            <button
+              className="primary-btn"
+              onClick={() => setShowTeamForm((prev) => !prev)}
+            >
+              {showTeamForm ? 'Hide Member Form' : 'Add Team Member'}
+            </button>
+          </div>
+          {showTeamForm && (
+            <AddTeamMember
+              projectId={projectId}
+              onMemberAdded={() => setRefreshTrigger((prev) => prev + 1)}
+            />
+          )}
           <TeamMembers projectId={projectId} />
         </div>
       )}
@@ -79,9 +103,10 @@ export const ProjectPage = ({ projectId, onBack }) => {
   );
 };
 
-export const ProjectsPage = () => {
+export const ProjectsPage = ({ onProjectSelected }) => {
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [showCreate, setShowCreate] = useState(false);
 
   if (selectedProjectId) {
     return (
@@ -94,8 +119,21 @@ export const ProjectsPage = () => {
 
   return (
     <div className="projects-page">
-      <CreateProject onProjectCreated={() => setRefreshTrigger(refreshTrigger + 1)} />
-      <ProjectList onSelectProject={setSelectedProjectId} />
+      <div className="project-actions">
+        <button onClick={() => setShowCreate(!showCreate)} className="primary-btn">
+          {showCreate ? 'Hide Create Project' : 'Add Project'}
+        </button>
+      </div>
+      {showCreate && (
+        <CreateProject onProjectCreated={() => {
+          setRefreshTrigger((prev) => prev + 1);
+          setShowCreate(false);
+        }} />
+      )}
+      <ProjectList onSelectProject={(id) => {
+        setSelectedProjectId(id);
+        if (onProjectSelected) onProjectSelected(id);
+      }} refreshTrigger={refreshTrigger} />
     </div>
   );
 };

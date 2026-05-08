@@ -41,20 +41,23 @@ export const TeamMembers = ({ projectId }) => {
         <p>No team members yet</p>
       ) : (
         <div className="members-list">
-          {members.map((member) => (
-            <div key={member.id} className="member-card">
-              <div className="member-info">
-                <p>
-                  <strong>
-                    {member.first_name} {member.last_name}
-                  </strong>
-                </p>
-                <p>{member.email}</p>
-                <span className="role">{member.role}</span>
+          {members.map((member) => {
+            const user = member.user || {};
+            return (
+              <div key={member._id || user._id} className="member-card">
+                <div className="member-info">
+                  <p>
+                    <strong>
+                      {user.firstName || user.username} {user.lastName || ''}
+                    </strong>
+                  </p>
+                  <p>{user.email}</p>
+                  <span className="role">{member.role}</span>
+                </div>
+                <button onClick={() => removeMember(user._id)}>Remove</button>
               </div>
-              <button onClick={() => removeMember(member.user_id)}>Remove</button>
-            </div>
-          ))}
+            );
+          })}
         </div>
       )}
     </div>
@@ -80,7 +83,7 @@ export const AddTeamMember = ({ projectId, onMemberAdded }) => {
 
     try {
       await teamService.addTeamMember(projectId, {
-        userId: parseInt(formData.userId),
+        userId: formData.userId,
         role: formData.role,
       });
       setFormData({ userId: '', role: 'member' });
@@ -98,7 +101,7 @@ export const AddTeamMember = ({ projectId, onMemberAdded }) => {
       {error && <div className="error">{error}</div>}
       <form onSubmit={handleSubmit}>
         <input
-          type="number"
+          type="text"
           name="userId"
           placeholder="User ID"
           value={formData.userId}

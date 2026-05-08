@@ -1,26 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Dashboard } from '../components/Dashboard.jsx';
-import { ProjectList } from '../components/Projects.jsx';
-import { ProjectPage } from './ProjectsPage.jsx';
+import { ProjectsPage } from './ProjectsPage.jsx';
 import '../styles/home.css';
 
 export const HomePage = () => {
-  const [view, setView] = useState('dashboard'); // dashboard, projects, project
-  const [selectedProjectId, setSelectedProjectId] = useState(null);
-
-  const handleViewChange = (newView) => {
-    setView(newView);
-    setSelectedProjectId(null);
-  };
-
-  if (view === 'project' && selectedProjectId) {
-    return (
-      <ProjectPage
-        projectId={selectedProjectId}
-        onBack={() => handleViewChange('projects')}
-      />
-    );
-  }
+  const [view, setView] = useState('dashboard'); // dashboard or projects
 
   return (
     <div className="home-page">
@@ -29,13 +13,13 @@ export const HomePage = () => {
         <div className="nav-buttons">
           <button
             className={view === 'dashboard' ? 'active' : ''}
-            onClick={() => handleViewChange('dashboard')}
+            onClick={() => setView('dashboard')}
           >
             Dashboard
           </button>
           <button
             className={view === 'projects' ? 'active' : ''}
-            onClick={() => handleViewChange('projects')}
+            onClick={() => setView('projects')}
           >
             Projects
           </button>
@@ -44,12 +28,7 @@ export const HomePage = () => {
 
       <main className="main-content">
         {view === 'dashboard' && <Dashboard />}
-        {view === 'projects' && (
-          <ProjectList onSelectProject={(id) => {
-            setSelectedProjectId(id);
-            setView('project');
-          }} />
-        )}
+        {view === 'projects' && <ProjectsPage />}
       </main>
     </div>
   );

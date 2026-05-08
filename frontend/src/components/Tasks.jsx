@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { taskService } from '../services/api.js';
+import { taskService, teamService } from '../services/api.js';
 import { useAuth } from '../contexts/AuthContext.jsx';
 import '../styles/tasks.css';
 
@@ -12,7 +12,7 @@ export const TaskList = ({ projectId, refreshTrigger }) => {
 
   useEffect(() => {
     fetchTasks();
-  }, [projectId, refreshTrigger]);
+  }, [projectId, refreshTrigger, filter]);
 
   const fetchTasks = async () => {
     try {
@@ -55,21 +55,25 @@ export const TaskList = ({ projectId, refreshTrigger }) => {
       ) : (
         <div className="tasks-list">
           {tasks.map((task) => (
-            <div key={task.id} className="task-card">
+            <div key={task._id} className="task-card">
               <div className="task-header">
                 <h4>{task.title}</h4>
                 <span className={`status ${task.status}`}>{task.status}</span>
               </div>
               <p>{task.description}</p>
-              <div className="task-meta">
+                      <div className="task-meta">
                 <small>Priority: {task.priority}</small>
-                {task.assigned_user && <small>Assigned to: {task.assigned_user}</small>}
-                {task.due_date && <small>Due: {new Date(task.due_date).toLocaleDateString()}</small>}
+                {task.assignedTo && (
+                  <small>
+                    Assigned to: {task.assignedTo.firstName || task.assignedTo.username} {task.assignedTo.lastName || ''}
+                  </small>
+                )}
+                {task.dueDate && <small>Due: {new Date(task.dueDate).toLocaleDateString()}</small>}
               </div>
               <div className="task-actions">
                 <select
                   value={task.status}
-                  onChange={(e) => updateTaskStatus(task.id, e.target.value)}
+                  onChange={(e) => updateTaskStatus(task._id, e.target.value)}
                 >
                   <option value="todo">To Do</option>
                   <option value="in-progress">In Progress</option>
@@ -89,6 +93,7 @@ export const CreateTask = ({ projectId, onTaskCreated }) => {
     title: '',
     description: '',
     priority: 'medium',
+    assignedTo: '',
     dueDate: '',
   });
   const [loading, setLoading] = useState(false);
@@ -98,14 +103,40 @@ export const CreateTask = ({ projectId, onTaskCreated }) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const [members, setMembers] = useState([]);
+
+  useEffect(() => {
+    const fetchMembers = async () => {
+      try {
+        const response = await teamService.getTeamMembers(projectId);
+        setMembers(response.data.teamMembers || []);
+      } catch (err) {
+        // ignore team load failures for task creation
+      }
+    };
+
+    if (projectId) {
+      fetchMembers();
+    }
+  }, [projectId]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
     setLoading(true);
 
+    const payload = {
+      title: formData.title,
+      description: formData.description,
+      priority: formData.priority,
+    };
+
+    if (formData.assignedTo) payload.assignedTo = formData.assignedTo;
+    if (formData.dueDate) payload.dueDate = formData.dueDate;
+
     try {
-      await taskService.createTask(projectId, formData);
-      setFormData({ title: '', description: '', priority: 'medium', dueDate: '' });
+      await taskService.createTask(projectId, payload);
+      setFormData({ title: '', description: '', priority: 'medium', assignedTo: '', dueDate: '' });
       onTaskCreated();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to create task');
@@ -137,6 +168,14 @@ export const CreateTask = ({ projectId, onTaskCreated }) => {
           <option value="low">Low Priority</option>
           <option value="medium">Medium Priority</option>
           <option value="high">High Priority</option>
+        </select>
+        <select name="assignedTo" value={formData.assignedTo} onChange={handleChange}>
+          <option value="">Unassigned</option>
+          {members.map((member) => (
+            <option key={member.user._id} value={member.user._id}>
+              {member.user.firstName || member.user.username} {member.user.lastName || ''}
+            </option>
+          ))}
         </select>
         <input
           type="date"

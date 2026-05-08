@@ -11,8 +11,9 @@ export const signup = async (req, res) => {
     }
 
     const { username, email, password, firstName, lastName } = req.body;
+    const normalizedEmail = email?.trim().toLowerCase();
 
-    const existingUser = await User.findOne({ $or: [{ email }, { username }] });
+    const existingUser = await User.findOne({ $or: [{ email: normalizedEmail }, { username }] });
     if (existingUser) {
       return res.status(400).json({ message: 'User already exists' });
     }
@@ -20,7 +21,7 @@ export const signup = async (req, res) => {
     const hashedPassword = await hashPassword(password);
     const user = await User.create({
       username,
-      email,
+      email: normalizedEmail,
       passwordHash: hashedPassword,
       firstName,
       lastName,
@@ -55,7 +56,8 @@ export const login = async (req, res) => {
     }
 
     const { email, password } = req.body;
-    const user = await User.findOne({ email });
+    const normalizedEmail = email?.trim().toLowerCase();
+    const user = await User.findOne({ email: normalizedEmail });
 
     if (!user) {
       return res.status(401).json({ message: 'Invalid credentials' });

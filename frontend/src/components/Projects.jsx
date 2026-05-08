@@ -2,14 +2,14 @@ import { useState, useEffect } from 'react';
 import { projectService } from '../services/api.js';
 import '../styles/projects.css';
 
-export const ProjectList = ({ onSelectProject }) => {
+export const ProjectList = ({ onSelectProject, refreshTrigger }) => {
   const [projects, setProjects] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
   useEffect(() => {
     fetchProjects();
-  }, []);
+  }, [refreshTrigger]);
 
   const fetchProjects = async () => {
     try {
@@ -34,13 +34,13 @@ export const ProjectList = ({ onSelectProject }) => {
         <div className="projects-grid">
           {projects.map((project) => (
             <div
-              key={project.id}
+              key={project._id}
               className="project-card"
-              onClick={() => onSelectProject(project.id)}
+              onClick={() => onSelectProject(project._id)}
             >
               <h3>{project.name}</h3>
               <p>{project.description}</p>
-              <small>Created: {new Date(project.created_at).toLocaleDateString()}</small>
+              <small>Created: {new Date(project.createdAt).toLocaleDateString()}</small>
             </div>
           ))}
         </div>

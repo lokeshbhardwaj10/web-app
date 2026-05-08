@@ -5,17 +5,20 @@ export const getDashboard = async (req, res) => {
   try {
     const userId = req.user.userId;
 
-    const tasks = await Task.find({ assignedTo: userId })
+    const projects = await Project.find({
+      $or: [{ owner: userId }, { 'teamMembers.user': userId }],
+    });
+
+    const projectIds = projects.map((project) => project._id);
+
+    const tasks = await Task.find({ project: { $in: projectIds } })
       .populate('project', 'name')
+      .populate('assignedTo', 'username email firstName lastName')
       .sort({ dueDate: 1 });
 
     const overdueTasks = tasks.filter(
       (task) => task.dueDate && task.dueDate < new Date() && task.status !== 'done'
     );
-
-    const projects = await Project.find({
-      $or: [{ owner: userId }, { 'teamMembers.user': userId }],
-    });
 
     const stats = tasks.reduce(
       (acc, task) => {
