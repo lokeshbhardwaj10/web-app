@@ -1,0 +1,70 @@
+.project-page {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.project-header {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.back-btn {
+  margin-bottom: 10px;
+  padding: 8px 16px;
+  background-color: #6c757d;
+  font-size: 14px;
+}
+
+.back-btn:hover {
+  background-color: #5a6268;
+}
+
+.project-header h1 {
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.project-header p {
+  color: #666;
+  font-size: 14px;
+}
+
+.project-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+  border-bottom: 2px solid #ddd;
+  background: white;
+  padding: 0 20px;
+  border-radius: 8px 8px 0 0;
+}
+
+.project-tabs button {
+  background: none;
+  border: none;
+  padding: 15px 20px;
+  color: #666;
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  font-weight: 500;
+  transition: all 0.3s;
+}
+
+.project-tabs button:hover {
+  color: #007bff;
+}
+
+.project-tabs button.active {
+  color: #007bff;
+  border-bottom-color: #007bff;
+}
+
+.tab-content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
