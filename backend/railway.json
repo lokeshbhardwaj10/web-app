@@ -1,13 +1,10 @@
 {
   "build": {
-    "builder": "nixpacks",
-    "nixpacks": {
-      "providers": ["nodejs-pnpm", "postgresql"]
-    }
+    "builder": "NIXPACKS"
   },
   "deploy": {
     "startCommand": "npm start",
-    "restartPolicyType": "on_failure",
+    "restartPolicyType": "ON_FAILURE",
     "restartPolicyMaxRetries": 5
   }
 }
