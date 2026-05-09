@@ -66,7 +66,7 @@ export const TeamMembers = ({ projectId }) => {
 
 export const AddTeamMember = ({ projectId, onMemberAdded }) => {
   const [formData, setFormData] = useState({
-    userId: '',
+    userIdentifier: '',
     role: 'member',
   });
   const [loading, setLoading] = useState(false);
@@ -83,10 +83,10 @@ export const AddTeamMember = ({ projectId, onMemberAdded }) => {
 
     try {
       await teamService.addTeamMember(projectId, {
-        userId: formData.userId,
+        userIdentifier: formData.userIdentifier,
         role: formData.role,
       });
-      setFormData({ userId: '', role: 'member' });
+      setFormData({ userIdentifier: '', role: 'member' });
       onMemberAdded();
     } catch (err) {
       setError(err.response?.data?.message || 'Failed to add team member');
@@ -102,9 +102,9 @@ export const AddTeamMember = ({ projectId, onMemberAdded }) => {
       <form onSubmit={handleSubmit}>
         <input
           type="text"
-          name="userId"
-          placeholder="User ID"
-          value={formData.userId}
+          name="userIdentifier"
+          placeholder="Email or Username"
+          value={formData.userIdentifier}
           onChange={handleChange}
           required
         />

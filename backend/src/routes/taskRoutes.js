@@ -7,6 +7,7 @@ import {
   updateTask,
   deleteTask,
   validateTask,
+  validateTaskUpdate,
 } from '../controllers/taskController.js';
 import { handleValidationErrors } from '../utils/errorHandler.js';
 
@@ -17,7 +18,7 @@ router.use(authenticate);
 router.post('/', validateTask, handleValidationErrors, createTask);
 router.get('/', getTasks);
 router.get('/:taskId', getTaskById);
-router.put('/:taskId', validateTask, handleValidationErrors, updateTask);
+router.put('/:taskId', validateTaskUpdate, handleValidationErrors, updateTask);
 router.delete('/:taskId', deleteTask);
 
 export default router;

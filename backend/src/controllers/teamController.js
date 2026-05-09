@@ -11,22 +11,27 @@ export const addTeamMember = async (req, res) => {
     }
 
     const { projectId } = req.params;
-    const { userId, role } = req.body;
+    const { userIdentifier, role } = req.body; // Changed from userId to userIdentifier
     const requesterId = req.user.userId;
-
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ message: 'Invalid user ID' });
-    }
 
     const project = await Project.findById(projectId);
     if (!project || project.owner.toString() !== requesterId) {
       return res.status(403).json({ message: 'Only project owner can add members' });
     }
 
-    const user = await User.findById(userId);
+    // Find user by email or username
+    const user = await User.findOne({
+      $or: [
+        { email: userIdentifier },
+        { username: userIdentifier }
+      ]
+    });
+
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found with that email or username' });
     }
+
+    const userId = user._id.toString();
 
     const existingMember = project.teamMembers.find((member) =>
       member.user.toString() === userId
@@ -92,11 +97,10 @@ export const removeTeamMember = async (req, res) => {
 };
 
 export const validateTeamMember = [
-  body('userId')
+  body('userIdentifier')
     .notEmpty()
-    .withMessage('User ID is required'),
+    .withMessage('Email or username is required'),
   body('role')
     .optional()
     .isIn(['admin', 'member'])
-    .withMessage('Role must be admin or member'),
 ];

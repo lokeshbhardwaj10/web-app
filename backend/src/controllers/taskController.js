@@ -191,3 +191,32 @@ export const validateTask = [
     .isMongoId()
     .withMessage('Invalid user ID'),
 ];
+
+export const validateTaskUpdate = [
+  body('title')
+    .optional()
+    .trim()
+    .isLength({ min: 1, max: 200 })
+    .withMessage('Title must be between 1 and 200 characters'),
+  body('description')
+    .optional()
+    .trim()
+    .isLength({ max: 2000 })
+    .withMessage('Description must not exceed 2000 characters'),
+  body('priority')
+    .optional()
+    .isIn(['low', 'medium', 'high'])
+    .withMessage('Priority must be low, medium, or high'),
+  body('status')
+    .optional()
+    .isIn(['todo', 'in-progress', 'done', 'overdue'])
+    .withMessage('Invalid status'),
+  body('dueDate')
+    .optional()
+    .isISO8601()
+    .withMessage('Invalid due date format'),
+  body('assignedTo')
+    .optional()
+    .isMongoId()
+    .withMessage('Invalid user ID'),
+];
