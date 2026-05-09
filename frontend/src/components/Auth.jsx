@@ -17,8 +17,12 @@ export const SignUp = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = ({ target }) => {
+    const { name, value } = target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -54,6 +58,8 @@ export const SignUp = () => {
             placeholder="Username"
             value={formData.username}
             onChange={handleChange}
+            onInput={handleChange}
+            autoComplete="off"
             required
           />
           <input
@@ -62,6 +68,8 @@ export const SignUp = () => {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
+            onInput={handleChange}
+            autoComplete="off"
             required
           />
           <input
@@ -70,6 +78,8 @@ export const SignUp = () => {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
+            onInput={handleChange}
+            autoComplete="off"
             required
           />
           <input
@@ -78,6 +88,8 @@ export const SignUp = () => {
             placeholder="First Name"
             value={formData.firstName}
             onChange={handleChange}
+            onInput={handleChange}
+            autoComplete="off"
           />
           <input
             type="text"
@@ -85,6 +97,8 @@ export const SignUp = () => {
             placeholder="Last Name"
             value={formData.lastName}
             onChange={handleChange}
+            onInput={handleChange}
+            autoComplete="off"
           />
           <button type="submit" disabled={loading}>
             {loading ? 'Signing up...' : 'Sign Up'}
@@ -108,8 +122,12 @@ export const LogIn = () => {
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+  const handleChange = ({ target }) => {
+    const { name, value } = target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
   };
 
   const handleSubmit = async (e) => {
@@ -145,6 +163,8 @@ export const LogIn = () => {
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
+            onInput={handleChange}
+            autoComplete="off"
             required
           />
           <input
@@ -153,6 +173,8 @@ export const LogIn = () => {
             placeholder="Password"
             value={formData.password}
             onChange={handleChange}
+            onInput={handleChange}
+            autoComplete="off"
             required
           />
           <button type="submit" disabled={loading}>
