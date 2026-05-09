@@ -3,8 +3,7 @@
     "builder": "nixpacks"
   },
   "deploy": {
-    "startCommand": "node frontend/src/server.js",
-    "restartPolicyType": "on_failure",
-    "restartPolicyMaxRetries": 5
+    "startCommand": "npm run build && npm run preview",
+    "restartPolicyType": "on_failure"
   }
 }
